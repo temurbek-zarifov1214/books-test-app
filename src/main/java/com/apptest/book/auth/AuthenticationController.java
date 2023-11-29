@@ -1,11 +1,13 @@
 package com.apptest.book.auth;
 
+import com.apptest.book.crud.ResponseDto;
+import com.apptest.book.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +27,16 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticateRequest request) {
 
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @GetMapping("/get")
+    public ResponseDto<UserDto> get(@RequestParam Integer id) {
+        return this.authenticationService.get(id);
+    }
+
+    @GetMapping("/getAllUsers")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseDto<List<UserDto>> getAllUsers() {
+        return this.authenticationService.getAllUsers();
     }
 }

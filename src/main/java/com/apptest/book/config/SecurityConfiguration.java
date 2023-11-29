@@ -33,6 +33,7 @@ public class SecurityConfiguration {
 
         String[] api={
                 "/audio/**",
+                "/book/**",
                 "/category/**",
                 "/dayWord/**",
                 "/note/**",
