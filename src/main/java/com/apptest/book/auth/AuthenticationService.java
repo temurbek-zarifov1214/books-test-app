@@ -1,16 +1,20 @@
 package com.apptest.book.auth;
 
 
+import com.apptest.book.book.BookMapper;
 import com.apptest.book.config.JwtService;
 import com.apptest.book.crud.ErrorDto;
 import com.apptest.book.crud.ResponseDto;
 import com.apptest.book.user.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +26,7 @@ public class AuthenticationService {
     private final UserValidation userValidation;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
+    private final BookMapper bookMapper;
     private final JwtService jwtService;
 
     public AuthenticationResponse register(RegisterRequest request) {
@@ -38,6 +42,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_USER)
+                .createdAt(LocalDateTime.now())
                 .build();
         this.userRepository.save(user);
         var jwt = jwtService.generateToken(user);
@@ -61,33 +66,22 @@ public class AuthenticationService {
                 .build();
     }
 
-    public ResponseDto<UserDto> get(Integer id) {
+    public ResponseEntity<User> get(Integer id) {
         Optional<User> optional = this.userRepository.findByIdAndDeletedAtIsNull(id);
         if (optional.isEmpty()) {
-            return ResponseDto.<UserDto>builder()
-                    .code(-1)
-                    .message("User is not found")
-                    .build();
+            return ResponseEntity.badRequest().body(null);
         }
-        return ResponseDto.<UserDto>builder()
-                .success(true)
-                .message("Ok")
-                .data(this.userMapper.toDtoWithBook(optional.get()))
-                .build();
+        User user = optional.get();
+        user.getBooks().stream().map(this.bookMapper::toDto);
+        return ResponseEntity.ok().body(user);
     }
 
-    public ResponseDto<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> list = this.userRepository.getAllUSers();
-        if (list.isEmpty()) {
-            return ResponseDto.<List<UserDto>>builder()
-                    .code(-1)
-                    .message("users are not")
-                    .build();
+        List<User> userList = new ArrayList<>();
+        for (User user : list) {
+            userList.add(user);
         }
-        return ResponseDto.<List<UserDto>>builder()
-                .success(true)
-                .message("Ok")
-                .data(list.stream().map(this.userMapper::toDtoWithBook).toList())
-                .build();
+        return ResponseEntity.ok().body(userList);
     }
 }

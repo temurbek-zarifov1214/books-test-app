@@ -49,7 +49,9 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorise ->
-                        authorise.requestMatchers("/auth/**","/swagger-ui/**",
+                        authorise.requestMatchers("/auth/**",
+                                        "/book/**",
+                                        "/swagger-ui/**",
                                         "/swagger-resources/*",
                                         "*.html",
                                         "/api/v1/swagger.json"

@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Integer> {
-    Optional<User>findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, Integer> {
+    Optional<User> findByEmail(String email);
 
-    Optional<User>findByIdAndDeletedAtIsNull(Integer id);
+    Optional<User> findByIdAndDeletedAtIsNull(Integer id);
 
-    @Query("""
-select u from User as u
-""")
-    List<User>getAllUSers();
+    @Query(value = " select * from users ",
+            nativeQuery = true)
+    List<User> getAllUSers();
 }

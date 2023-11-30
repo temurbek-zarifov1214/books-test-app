@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+
 @Configuration
 @RequiredArgsConstructor
 public class DefaultAdmin {
@@ -28,6 +30,7 @@ public class DefaultAdmin {
                 .email("admin@admin.com")
                 .password(passwordEncoder.encode("admin"))
                 .role(Role.ROLE_ADMIN)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         this.userRepository.save(admin);

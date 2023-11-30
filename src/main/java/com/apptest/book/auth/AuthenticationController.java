@@ -1,6 +1,7 @@
 package com.apptest.book.auth;
 
 import com.apptest.book.crud.ResponseDto;
+import com.apptest.book.user.User;
 import com.apptest.book.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,13 +31,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("/get")
-    public ResponseDto<UserDto> get(@RequestParam Integer id) {
+    public ResponseEntity<User> get(@RequestParam Integer id) {
         return this.authenticationService.get(id);
     }
 
     @GetMapping("/getAllUsers")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseDto<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         return this.authenticationService.getAllUsers();
     }
 }
